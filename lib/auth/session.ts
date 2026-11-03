@@ -1,5 +1,6 @@
 import type { JwtPayload } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export interface AuthenticatedUser {
@@ -14,6 +15,7 @@ export interface AuthenticatedUser {
  * using Supabase SSR `getClaims()`.
  */
 export async function getAuthClaims(): Promise<JwtPayload | null> {
+  await connection();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
 
