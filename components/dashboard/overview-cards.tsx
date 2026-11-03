@@ -2,69 +2,64 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   PiggyBank,
+  TrendingDown,
   TrendingUp,
   Wallet,
 } from "lucide-react";
+import { formatPaiseToRupees, formatSqlNumericToRupees } from "@/lib/finance/money";
+import type { DashboardMetrics } from "@/lib/dashboard/actions";
 
-interface OverviewMetric {
-  id: string;
-  label: string;
-  amount: string;
-  change: string;
-  changeNote: string;
-  trend: "positive" | "neutral";
-  accent: "primary" | "secondary";
-  icon: typeof Wallet;
+interface OverviewCardsProps {
+  metrics: DashboardMetrics;
 }
 
-const OVERVIEW_METRICS: OverviewMetric[] = [
-  {
-    id: "balance",
-    label: "Total Net Balance",
-    amount: "$48,920.50",
-    change: "+12.4%",
-    changeNote: "vs. previous 30 days",
-    trend: "positive",
-    accent: "primary",
-    icon: Wallet,
-  },
-  {
-    id: "income",
-    label: "Monthly Income",
-    amount: "$9,450.00",
-    change: "+4.8%",
-    changeNote: "2 recurring inflows",
-    trend: "positive",
-    accent: "secondary",
-    icon: ArrowUpRight,
-  },
-  {
-    id: "expenses",
-    label: "Monthly Expenses",
-    amount: "$3,684.20",
-    change: "-3.2%",
-    changeNote: "Under $4,200 target",
-    trend: "positive",
-    accent: "primary",
-    icon: ArrowDownRight,
-  },
-  {
-    id: "savings",
-    label: "Net Cash Flow",
-    amount: "+$5,765.80",
-    change: "61.0%",
-    changeNote: "Monthly savings rate",
-    trend: "positive",
-    accent: "secondary",
-    icon: PiggyBank,
-  },
-];
+export function OverviewCards({ metrics }: OverviewCardsProps) {
+  const isPositiveCashFlow = metrics.netCashFlow >= 0;
 
-export function OverviewCards() {
+  const cardItems = [
+    {
+      id: "balance",
+      label: "Total Net Balance",
+      amount: formatSqlNumericToRupees(metrics.totalNetBalance),
+      note: "Active accounts net worth",
+      icon: Wallet,
+      accent: "primary" as const,
+      trendIcon: TrendingUp,
+    },
+    {
+      id: "income",
+      label: `${metrics.currentMonthName} Income`,
+      amount: `+${formatPaiseToRupees(metrics.monthlyIncome)}`,
+      note: "Total monthly deposits",
+      icon: ArrowUpRight,
+      accent: "secondary" as const,
+      trendIcon: TrendingUp,
+    },
+    {
+      id: "expenses",
+      label: `${metrics.currentMonthName} Expenses`,
+      amount: `-${formatPaiseToRupees(metrics.monthlyExpenses)}`,
+      note: "Total monthly outflows",
+      icon: ArrowDownRight,
+      accent: "primary" as const,
+      trendIcon: TrendingDown,
+    },
+    {
+      id: "cashflow",
+      label: "Net Cash Flow",
+      amount: `${isPositiveCashFlow ? "+" : "-"}${formatPaiseToRupees(Math.abs(metrics.netCashFlow))}`,
+      note: `${metrics.savingsRate}% monthly savings rate`,
+      icon: PiggyBank,
+      accent: "secondary" as const,
+      trendIcon: isPositiveCashFlow ? TrendingUp : TrendingDown,
+    },
+  ];
+
   return (
     <section aria-label="Financial overview metrics" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {OVERVIEW_METRICS.map((metric) => {
+      {cardItems.map((metric) => {
         const Icon = metric.icon;
+        const TrendIcon = metric.trendIcon;
         const isPrimary = metric.accent === "primary";
 
         return (
@@ -95,17 +90,17 @@ export function OverviewCards() {
             </div>
 
             <div className="mt-4 flex items-baseline justify-between gap-2">
-              <p className="font-mono text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+              <p className="font-mono text-2xl font-bold tracking-tight text-foreground tabular-nums">
                 {metric.amount}
               </p>
             </div>
 
             <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3 text-[11px]">
               <span className="inline-flex items-center gap-1 font-medium text-brand-secondary">
-                <TrendingUp className="size-3" aria-hidden="true" />
-                <span>{metric.change}</span>
+                <TrendIcon className="size-3" aria-hidden="true" />
+                <span>Verified</span>
               </span>
-              <span className="text-muted-foreground">{metric.changeNote}</span>
+              <span className="text-muted-foreground">{metric.note}</span>
             </div>
           </div>
         );
@@ -113,4 +108,3 @@ export function OverviewCards() {
     </section>
   );
 }
-

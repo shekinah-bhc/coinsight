@@ -175,33 +175,8 @@
   }
 }
 
-
-@layer utilities {
-  .glass-card {
-    background-color: var(--glass-surface);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  .glass-subtle {
-    background-color: color-mix(in srgb, var(--glass-surface) 75%, transparent);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  .fintech-ambient {
-    background-image:
-      radial-gradient(
-        circle at 15% 0%,
-        color-mix(in srgb, var(--brand-primary) 10%, transparent) 0%,
-        transparent 45%
-      ),
-      radial-gradient(
-        circle at 85% 5%,
-        color-mix(in srgb, var(--brand-secondary) 7%, transparent) 0%,
-        transparent 40%
-      );
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
   }
 }

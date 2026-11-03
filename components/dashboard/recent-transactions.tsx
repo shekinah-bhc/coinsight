@@ -1,339 +1,205 @@
+import Link from "next/link";
 import {
   ArrowDownLeft,
+  ArrowRight,
   ArrowUpRight,
-  Building2,
-  Coffee,
-  CreditCard,
-  Globe,
-  Home,
-  Landmark,
-  ShoppingBag,
-  Sparkles,
+  PieChart,
+  Wallet,
 } from "lucide-react";
+import { formatPaiseToRupees } from "@/lib/finance/money";
+import { CategoryIcon } from "@/components/transactions/category-icon";
+import type { CategorySpending } from "@/lib/dashboard/actions";
+import type { TransactionItem } from "@/lib/transactions/actions";
 
-interface PlaceholderTransaction {
-  id: string;
-  merchant: string;
-  category: string;
-  account: string;
-  date: string;
-  amount: string;
-  type: "inflow" | "outflow";
-  status: "Settled" | "Pending";
-  icon: typeof Landmark;
+interface RecentTransactionsProps {
+  recentTransactions: TransactionItem[];
+  categorySpending: CategorySpending[];
+  currentMonthName: string;
 }
 
-const SAMPLE_TRANSACTIONS: PlaceholderTransaction[] = [
-  {
-    id: "tx-1",
-    merchant: "Acme Corp Payroll",
-    category: "Salary & Wages",
-    account: "Checking ••4821",
-    date: "Today, 09:15 AM",
-    amount: "+$4,725.00",
-    type: "inflow",
-    status: "Settled",
-    icon: Landmark,
-  },
-  {
-    id: "tx-2",
-    merchant: "Vanguard Index Fund",
-    category: "Investments",
-    account: "Brokerage ••9014",
-    date: "Yesterday",
-    amount: "-$1,250.00",
-    type: "outflow",
-    status: "Settled",
-    icon: Building2,
-  },
-  {
-    id: "tx-3",
-    merchant: "Metropolitan Properties",
-    category: "Housing & Rent",
-    account: "Checking ••4821",
-    date: "Nov 01",
-    amount: "-$1,850.00",
-    type: "outflow",
-    status: "Settled",
-    icon: Home,
-  },
-  {
-    id: "tx-4",
-    merchant: "Whole Foods Market",
-    category: "Groceries",
-    account: "Sapphire ••3310",
-    date: "Oct 31",
-    amount: "-$142.80",
-    type: "outflow",
-    status: "Settled",
-    icon: ShoppingBag,
-  },
-  {
-    id: "tx-5",
-    merchant: "Cloud Infrastructure Services",
-    category: "Software & Tech",
-    account: "Sapphire ••3310",
-    date: "Oct 30",
-    amount: "-$64.00",
-    type: "outflow",
-    status: "Pending",
-    icon: Globe,
-  },
-  {
-    id: "tx-6",
-    merchant: "Blue Bottle Coffee",
-    category: "Dining & Cafe",
-    account: "Sapphire ••3310",
-    date: "Oct 29",
-    amount: "-$14.50",
-    type: "outflow",
-    status: "Settled",
-    icon: Coffee,
-  },
-];
-
-interface AllocationItem {
-  category: string;
-  spent: string;
-  limit: string;
-  percent: number;
-  accent: "primary" | "secondary";
-}
-
-const BUDGET_ALLOCATIONS: AllocationItem[] = [
-  {
-    category: "Housing & Utilities",
-    spent: "$2,040",
-    limit: "$2,200",
-    percent: 92,
-    accent: "primary",
-  },
-  {
-    category: "Investments & Savings",
-    spent: "$1,250",
-    limit: "$1,500",
-    percent: 83,
-    accent: "secondary",
-  },
-  {
-    category: "Groceries & Dining",
-    spent: "$485",
-    limit: "$750",
-    percent: 65,
-    accent: "primary",
-  },
-  {
-    category: "Subscriptions & Cloud",
-    spent: "$159",
-    limit: "$250",
-    percent: 64,
-    accent: "secondary",
-  },
-];
-
-export function RecentTransactions() {
+export function RecentTransactions({
+  recentTransactions,
+  categorySpending,
+  currentMonthName,
+}: RecentTransactionsProps) {
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      <section
-        id="transactions"
-        aria-labelledby="recent-transactions-heading"
-        className="glass-card flex flex-col justify-between rounded-2xl p-5 sm:p-6 lg:col-span-2"
-      >
-        <div>
-          <div className="flex flex-col justify-between gap-2 border-b border-border pb-4 sm:flex-row sm:items-center">
+    <section
+      aria-label="Recent activity and category allocation"
+      className="grid gap-6 lg:grid-cols-3"
+    >
+      {/* 1. Recent Transactions Ledger Feed (2 columns) */}
+      <div className="glass-card relative flex flex-col justify-between overflow-hidden rounded-2xl p-5 sm:p-6 lg:col-span-2">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
+        />
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-2">
-                <h2
-                  id="recent-transactions-heading"
-                  className="font-heading text-base font-semibold tracking-tight text-foreground"
-                >
-                  Recent Transactions
-                </h2>
-                <span className="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                  Sample Preview
-                </span>
-              </div>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Visual preview of categorized cash flow activity across accounts
+              <h2 className="font-heading text-base font-semibold tracking-tight text-foreground sm:text-lg">
+                Recent Ledger Activity
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Latest transactions recorded across your accounts.
               </p>
             </div>
-
-            <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-              <CreditCard className="size-3.5 text-primary" aria-hidden="true" />
-              <span>All Accounts</span>
-            </div>
+            <Link
+              href="/transactions"
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              <span>View all</span>
+              <ArrowRight className="size-3.5" aria-hidden="true" />
+            </Link>
           </div>
 
-          <div className="mt-3 divide-y divide-border/60">
-            {SAMPLE_TRANSACTIONS.map((tx) => {
-              const Icon = tx.icon;
-              const isInflow = tx.type === "inflow";
+          {recentTransactions.length > 0 ? (
+            <div className="divide-y divide-border/40">
+              {recentTransactions.map((tx) => {
+                const isIncome = tx.type === "income";
 
-              return (
-                <div
-                  key={tx.id}
-                  className="flex items-center justify-between gap-3 py-3.5 transition-colors first:pt-2 last:pb-1"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span
-                      className={`flex size-9 shrink-0 items-center justify-center rounded-xl border ${
-                        isInflow
-                          ? "border-brand-secondary/25 bg-brand-secondary/10 text-brand-secondary"
-                          : "border-border bg-surface-secondary/70 text-muted-foreground dark:bg-white/[0.03]"
-                      }`}
-                    >
-                      <Icon className="size-4" aria-hidden="true" />
-                    </span>
+                return (
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between gap-3 py-3 text-xs"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`flex size-9 shrink-0 items-center justify-center rounded-xl border ${
+                          isIncome
+                            ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                            : "border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                        }`}
+                      >
+                        {isIncome ? (
+                          <ArrowUpRight className="size-4" />
+                        ) : (
+                          <ArrowDownLeft className="size-4" />
+                        )}
+                      </div>
 
-                    <div className="min-w-0">
-                      <p className="truncate text-xs font-medium text-foreground sm:text-sm">
-                        {tx.merchant}
-                      </p>
-                      <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
-                        <span>{tx.category}</span>
-                        <span aria-hidden="true">&middot;</span>
-                        <span>{tx.account}</span>
+                      <div className="min-w-0 space-y-0.5">
+                        <p className="font-medium text-foreground truncate">
+                          {tx.description || tx.merchant || (isIncome ? "Income Deposit" : "Expense")}
+                        </p>
+                        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                          {tx.category ? (
+                            <span>{tx.category.name}</span>
+                          ) : (
+                            <span>Uncategorized</span>
+                          )}
+                          <span>•</span>
+                          <span className="truncate max-w-[100px]">{tx.account.name}</span>
+                          <span>•</span>
+                          <span>
+                            {new Date(tx.transaction_date).toLocaleDateString("en-IN", {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex shrink-0 items-center gap-3 text-right">
-                    <div className="hidden sm:block">
-                      <span
-                        className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${
-                          tx.status === "Settled"
-                            ? "border-border bg-surface-secondary/60 text-muted-foreground dark:bg-white/[0.03]"
-                            : "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                        }`}
-                      >
-                        {tx.status}
-                      </span>
-                    </div>
-
-                    <div>
+                    <div className="text-right shrink-0">
                       <p
-                        className={`inline-flex items-center gap-0.5 font-mono text-xs font-semibold tabular-nums sm:text-sm ${
-                          isInflow ? "text-brand-secondary" : "text-foreground"
+                        className={`font-mono text-sm font-bold tracking-tight ${
+                          isIncome ? "text-emerald-600 dark:text-emerald-400" : "text-foreground"
                         }`}
                       >
-                        {isInflow ? (
-                          <ArrowDownLeft
-                            className="size-3.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <ArrowUpRight
-                            className="size-3.5 shrink-0 text-muted-foreground"
-                            aria-hidden="true"
-                          />
-                        )}
-                        <span>{tx.amount}</span>
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {tx.date}
+                        {isIncome ? "+" : "-"}
+                        {formatPaiseToRupees(tx.amount)}
                       </p>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-border/70 p-8 text-center text-xs text-muted-foreground">
+              <Wallet className="size-6 mx-auto mb-2 opacity-40" />
+              <p className="font-medium text-foreground">No recent transactions</p>
+              <p className="mt-1 text-[11px]">
+                Transactions you record will appear here with live balance updates.
+              </p>
+              <Link
+                href="/transactions"
+                className="inline-block mt-3 text-xs text-primary font-medium hover:underline"
+              >
+                Go to Transactions →
+              </Link>
+            </div>
+          )}
         </div>
+      </div>
 
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-border/70 bg-surface-secondary/50 px-3.5 py-2.5 text-xs text-muted-foreground dark:bg-white/[0.02]">
-          <span className="inline-flex items-center gap-1.5">
-            <Sparkles className="size-3.5 text-primary" aria-hidden="true" />
-            <span>
-              Placeholder transactions shown for layout preview. No database
-              records created.
+      {/* 2. Monthly Spending by Category (1 column) */}
+      <div className="glass-card relative flex flex-col justify-between overflow-hidden rounded-2xl p-5 sm:p-6">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-secondary/30 to-transparent"
+        />
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-heading text-base font-semibold tracking-tight text-foreground sm:text-lg">
+                Category Spending
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                {currentMonthName} expense breakdown.
+              </p>
+            </div>
+            <span className="flex size-8 items-center justify-center rounded-xl border border-brand-secondary/25 bg-brand-secondary/10 text-brand-secondary">
+              <PieChart className="size-4" aria-hidden="true" />
             </span>
-          </span>
-        </div>
-      </section>
-
-      <section
-        id="budgets"
-        aria-labelledby="budget-allocation-heading"
-        className="glass-card flex flex-col justify-between rounded-2xl p-5 sm:p-6"
-      >
-        <div>
-          <div className="border-b border-border pb-4">
-            <h2
-              id="budget-allocation-heading"
-              className="font-heading text-base font-semibold tracking-tight text-foreground"
-            >
-              Monthly Allocation
-            </h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Category targets and cash flow distribution
-            </p>
           </div>
 
-          <div className="mt-5 space-y-4">
-            {BUDGET_ALLOCATIONS.map((item) => {
-              const isPrimary = item.accent === "primary";
-              return (
-                <div key={item.category} className="space-y-2">
+          {categorySpending.length > 0 ? (
+            <div className="space-y-3.5 pt-1">
+              {categorySpending.slice(0, 5).map((cat) => (
+                <div key={cat.categoryId} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium text-foreground">
-                      {item.category}
+                    <span className="flex items-center gap-2 font-medium text-foreground">
+                      <span
+                        className="flex size-4 items-center justify-center rounded-xs text-white text-[10px]"
+                        style={{ backgroundColor: cat.color || "#6366F1" }}
+                      >
+                        <CategoryIcon iconName={cat.icon} className="size-2.5" />
+                      </span>
+                      <span>{cat.categoryName}</span>
                     </span>
-                    <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
-                      <strong className="font-semibold text-foreground">
-                        {item.spent}
-                      </strong>{" "}
-                      / {item.limit}
+                    <span className="font-mono text-muted-foreground">
+                      {formatPaiseToRupees(cat.amount)} ({cat.percentage}%)
                     </span>
                   </div>
-                  <div
-                    role="progressbar"
-                    aria-label={`${item.category} budget usage`}
-                    aria-valuenow={item.percent}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    className="h-2 w-full overflow-hidden rounded-full bg-surface-secondary dark:bg-white/[0.06]"
-                  >
+                  {/* Progress bar */}
+                  <div className="h-1.5 w-full rounded-full bg-muted/60 overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all ${
-                        isPrimary ? "bg-primary" : "bg-brand-secondary"
-                      }`}
-                      style={{ width: `${item.percent}%` }}
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        width: `${Math.min(100, Math.max(2, cat.percentage))}%`,
+                        backgroundColor: cat.color || "#6366F1",
+                      }}
                     />
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-border/70 p-6 text-center text-xs text-muted-foreground">
+              <p className="font-medium text-foreground">No expense data yet</p>
+              <p className="mt-1 text-[11px]">
+                Expense transactions for {currentMonthName} will display category allocation here.
+              </p>
+            </div>
+          )}
         </div>
 
-        <div
-          id="accounts"
-          className="mt-6 rounded-xl border border-border bg-surface-secondary/50 p-4 dark:bg-white/[0.02]"
-        >
-          <p className="text-xs font-semibold text-foreground">
-            Account Synchronization
-          </p>
-          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-            Ready to connect checking, savings, and investment ledgers in the
-            next module.
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-center">
-            <div className="rounded-lg border border-border/70 bg-card px-2.5 py-2">
-              <p className="font-mono text-xs font-semibold text-foreground tabular-nums">
-                $18,420
-              </p>
-              <p className="text-[10px] text-muted-foreground">Liquid Cash</p>
-            </div>
-            <div className="rounded-lg border border-border/70 bg-card px-2.5 py-2">
-              <p className="font-mono text-xs font-semibold text-brand-secondary tabular-nums">
-                $30,500
-              </p>
-              <p className="text-[10px] text-muted-foreground">Investments</p>
-            </div>
-          </div>
+        <div className="pt-4 border-t border-border/50 text-[11px] text-muted-foreground">
+          <p>Transfers between accounts are excluded to prevent double counting.</p>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
-
