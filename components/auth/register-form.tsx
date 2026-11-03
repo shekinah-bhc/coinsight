@@ -4,6 +4,7 @@ import { useActionState, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
   AlertCircle,
+  ArrowRight,
   CheckCircle2,
   Eye,
   EyeOff,
@@ -86,8 +87,8 @@ export function RegisterForm() {
         aria-live="polite"
         className="space-y-5 py-2 text-center"
       >
-        <div className="mx-auto flex size-11 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-          <MailCheck className="size-5" aria-hidden="true" />
+        <div className="mx-auto flex size-12 items-center justify-center rounded-2xl border border-brand-secondary/30 bg-brand-secondary/10 text-brand-secondary">
+          <MailCheck className="size-6" aria-hidden="true" />
         </div>
         <div className="space-y-1.5">
           <h2 className="font-heading text-base font-semibold text-foreground">
@@ -98,17 +99,20 @@ export function RegisterForm() {
           </p>
           {state.email ? (
             <p className="pt-1 text-xs font-medium text-foreground">
-              Sent to <span className="underline underline-offset-4">{state.email}</span>
+              Sent to{" "}
+              <span className="text-primary underline underline-offset-4">
+                {state.email}
+              </span>
             </p>
           ) : null}
         </div>
-        <div className="rounded-lg border border-border bg-muted/40 p-3 text-left text-xs text-muted-foreground">
+        <div className="rounded-xl border border-border bg-surface-secondary/60 p-3.5 text-left text-xs text-muted-foreground dark:bg-white/[0.03]">
           Click the confirmation link in the email to complete verification and
           access your Coinsight dashboard.
         </div>
         <Link
           href="/login"
-          className="inline-flex h-9 w-full items-center justify-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className="inline-flex h-10 w-full items-center justify-center rounded-xl border border-border bg-surface-secondary/70 px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-white/[0.04]"
         >
           Return to sign in
         </Link>
@@ -134,18 +138,23 @@ export function RegisterForm() {
         <div
           role="alert"
           aria-live="polite"
-          className="flex items-start gap-2.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-xs text-destructive"
+          className="flex items-start gap-2.5 rounded-xl border border-destructive/35 bg-destructive/10 px-3.5 py-2.5 text-xs text-destructive"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           <span>{bannerMessage}</span>
         </div>
       ) : null}
 
-      <div className="space-y-1.5">
-        <Label htmlFor="register-email">Email address</Label>
+      <div className="space-y-2">
+        <Label
+          htmlFor="register-email"
+          className="text-xs font-medium text-foreground"
+        >
+          Email address
+        </Label>
         <div className="relative">
           <Mail
-            className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -166,7 +175,7 @@ export function RegisterForm() {
                 setClientErrors((prev) => ({ ...prev, email: undefined }));
               }
             }}
-            className="h-9 pl-8 text-sm md:text-sm"
+            className="h-10 rounded-xl border-border bg-surface-secondary/60 pl-9 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/25 md:text-sm dark:bg-white/[0.03]"
             required
           />
         </div>
@@ -177,11 +186,16 @@ export function RegisterForm() {
         ) : null}
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="register-password">Password</Label>
+      <div className="space-y-2">
+        <Label
+          htmlFor="register-password"
+          className="text-xs font-medium text-foreground"
+        >
+          Password
+        </Label>
         <div className="relative">
           <Lock
-            className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -199,7 +213,7 @@ export function RegisterForm() {
                 setClientErrors((prev) => ({ ...prev, password: undefined }));
               }
             }}
-            className="h-9 pr-9 pl-8 text-sm md:text-sm"
+            className="h-10 rounded-xl border-border bg-surface-secondary/60 pr-10 pl-9 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/25 md:text-sm dark:bg-white/[0.03]"
             required
           />
           <button
@@ -207,12 +221,12 @@ export function RegisterForm() {
             onClick={() => setShowPassword((prev) => !prev)}
             disabled={isPending}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           >
             {showPassword ? (
-              <EyeOff className="size-3.5" aria-hidden="true" />
+              <EyeOff className="size-4" aria-hidden="true" />
             ) : (
-              <Eye className="size-3.5" aria-hidden="true" />
+              <Eye className="size-4" aria-hidden="true" />
             )}
           </button>
         </div>
@@ -225,29 +239,34 @@ export function RegisterForm() {
         <ul
           id="register-password-requirements"
           aria-label="Password requirements"
-          className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1"
+          className="grid grid-cols-2 gap-x-3 gap-y-1.5 rounded-xl border border-border/70 bg-surface-secondary/40 p-2.5 dark:bg-white/[0.02]"
         >
           {passwordChecks.map((check) => (
             <li
               key={check.label}
-              className={`flex items-center gap-1.5 text-[11px] ${
+              className={`flex items-center gap-1.5 text-[11px] transition-colors ${
                 check.met
-                  ? "text-emerald-600 dark:text-emerald-400"
+                  ? "font-medium text-brand-secondary"
                   : "text-muted-foreground"
               }`}
             >
-              <CheckCircle2 className="size-3 shrink-0" aria-hidden="true" />
+              <CheckCircle2 className="size-3.5 shrink-0" aria-hidden="true" />
               <span>{check.label}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="register-confirm-password">Confirm password</Label>
+      <div className="space-y-2">
+        <Label
+          htmlFor="register-confirm-password"
+          className="text-xs font-medium text-foreground"
+        >
+          Confirm password
+        </Label>
         <div className="relative">
           <Lock
-            className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -271,7 +290,7 @@ export function RegisterForm() {
                 }));
               }
             }}
-            className="h-9 pr-9 pl-8 text-sm md:text-sm"
+            className="h-10 rounded-xl border-border bg-surface-secondary/60 pr-10 pl-9 text-sm transition-colors focus-visible:border-primary focus-visible:ring-primary/25 md:text-sm dark:bg-white/[0.03]"
             required
           />
           <button
@@ -283,12 +302,12 @@ export function RegisterForm() {
                 ? "Hide confirm password"
                 : "Show confirm password"
             }
-            className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           >
             {showConfirmPassword ? (
-              <EyeOff className="size-3.5" aria-hidden="true" />
+              <EyeOff className="size-4" aria-hidden="true" />
             ) : (
-              <Eye className="size-3.5" aria-hidden="true" />
+              <Eye className="size-4" aria-hidden="true" />
             )}
           </button>
         </div>
@@ -306,7 +325,7 @@ export function RegisterForm() {
         type="submit"
         size="lg"
         disabled={isPending}
-        className="mt-2 h-9 w-full text-sm font-medium"
+        className="mt-3 h-10 w-full gap-2 rounded-xl bg-primary text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90"
       >
         {isPending ? (
           <>
@@ -314,7 +333,10 @@ export function RegisterForm() {
             <span>Creating account...</span>
           </>
         ) : (
-          <span>Create Coinsight account</span>
+          <>
+            <span>Create Coinsight account</span>
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </>
         )}
       </Button>
     </form>

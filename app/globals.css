@@ -38,6 +38,11 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-glass: var(--glass-surface);
+  --color-glass-border: var(--glass-border);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,72 +53,84 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: oklch(0.985 0.002 260);
+  --surface-secondary: oklch(0.965 0.004 260);
+  --foreground: oklch(0.145 0.015 260);
+  --card: rgba(255, 255, 255, 0.85);
+  --card-foreground: oklch(0.145 0.015 260);
+  --popover: #ffffff;
+  --popover-foreground: oklch(0.145 0.015 260);
+  --primary: #6d5ce8;
+  --primary-foreground: #ffffff;
+  --secondary: oklch(0.955 0.006 260);
+  --secondary-foreground: oklch(0.205 0.015 260);
+  --muted: oklch(0.955 0.006 260);
+  --muted-foreground: #5e6678;
+  --accent: oklch(0.955 0.008 260);
+  --accent-foreground: oklch(0.205 0.015 260);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --border: rgba(15, 23, 42, 0.09);
+  --input: rgba(15, 23, 42, 0.12);
+  --ring: #6d5ce8;
+  --chart-1: #6d5ce8;
+  --chart-2: #14b8a6;
+  --chart-3: #3b82f6;
+  --chart-4: #f59e0b;
+  --chart-5: #ec4899;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #f4f6fb;
+  --sidebar-foreground: oklch(0.145 0.015 260);
+  --sidebar-primary: #6d5ce8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(109, 92, 232, 0.08);
+  --sidebar-accent-foreground: oklch(0.145 0.015 260);
+  --sidebar-border: rgba(15, 23, 42, 0.08);
+  --sidebar-ring: #6d5ce8;
+  --glass-surface: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --brand-primary: #6d5ce8;
+  --brand-secondary: #0d9488;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #080b12;
+  --surface-secondary: #0d1320;
+  --foreground: #f4f5fa;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-foreground: #f4f5fa;
+  --popover: #0d1320;
+  --popover-foreground: #f4f5fa;
+  --primary: #8b7cff;
+  --primary-foreground: #080b12;
+  --secondary: #131b2e;
+  --secondary-foreground: #f4f5fa;
+  --muted: #111829;
+  --muted-foreground: #9299aa;
+  --accent: rgba(255, 255, 255, 0.06);
+  --accent-foreground: #f4f5fa;
+  --destructive: #f87171;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #8b7cff;
+  --chart-1: #8b7cff;
+  --chart-2: #42d6c5;
+  --chart-3: #60a5fa;
+  --chart-4: #fbbf24;
+  --chart-5: #f472b6;
+  --sidebar: #0d1320;
+  --sidebar-foreground: #f4f5fa;
+  --sidebar-primary: #8b7cff;
+  --sidebar-primary-foreground: #080b12;
+  --sidebar-accent: rgba(139, 124, 255, 0.12);
+  --sidebar-accent-foreground: #f4f5fa;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #8b7cff;
+  --glass-surface: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.07);
+  --brand-primary: #8b7cff;
+  --brand-secondary: #42d6c5;
 }
 
 @layer base {
@@ -121,9 +138,70 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground selection:bg-primary/25 selection:text-foreground;
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background-color: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-subtle {
+    background-color: color-mix(in srgb, var(--glass-surface) 75%, transparent);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .fintech-ambient {
+    background-image:
+      radial-gradient(
+        circle at 15% 0%,
+        color-mix(in srgb, var(--brand-primary) 10%, transparent) 0%,
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at 85% 5%,
+        color-mix(in srgb, var(--brand-secondary) 7%, transparent) 0%,
+        transparent 40%
+      );
+  }
+}
+
+
+@layer utilities {
+  .glass-card {
+    background-color: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-subtle {
+    background-color: color-mix(in srgb, var(--glass-surface) 75%, transparent);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .fintech-ambient {
+    background-image:
+      radial-gradient(
+        circle at 15% 0%,
+        color-mix(in srgb, var(--brand-primary) 10%, transparent) 0%,
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at 85% 5%,
+        color-mix(in srgb, var(--brand-secondary) 7%, transparent) 0%,
+        transparent 40%
+      );
   }
 }
