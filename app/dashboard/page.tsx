@@ -1,7 +1,10 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { ShieldCheck, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { requireAuth } from "@/lib/auth/session";
+import { createClient } from "@/lib/supabase/server";
+import { resolveAvatarUrl } from "@/lib/onboarding/avatar-utils";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { OverviewCards } from "@/components/dashboard/overview-cards";
@@ -30,7 +33,16 @@ function getDisplayUserName(email: string | undefined): string {
 
 async function DashboardSessionContent() {
   const user = await requireAuth();
-  const displayName = getDisplayUserName(user.email);
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const displayName = profile?.full_name || getDisplayUserName(user.email);
+  const showOnboardingBanner = !profile?.onboarding_completed;
+  const resolvedAvatarUrl = await resolveAvatarUrl(profile?.avatar_url);
 
   return (
     <div className="flex min-w-0 flex-1 flex-col">
@@ -38,9 +50,42 @@ async function DashboardSessionContent() {
         userEmail={user.email}
         userId={user.id}
         userRole={user.role}
+        userName={profile?.full_name}
+        userAvatarUrl={resolvedAvatarUrl}
+        onboardingCompleted={profile?.onboarding_completed}
       />
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        {showOnboardingBanner && (
+          <div
+            role="region"
+            aria-label="Profile completion prompt"
+            className="relative flex flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-brand-secondary/5 to-primary/5 p-4 sm:flex-row sm:items-center sm:px-6 sm:py-4 shadow-sm"
+          >
+            <div className="flex items-start gap-3.5">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary shadow-sm">
+                <Sparkles className="size-4.5" aria-hidden="true" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-xs font-semibold text-foreground sm:text-sm">
+                  Complete your profile setup
+                </p>
+                <p className="text-[11px] text-muted-foreground sm:text-xs">
+                  Set up your preferred currency, income cycle, and financial focus to unlock tailored insights and automated budgeting.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/onboarding"
+              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-medium text-primary-foreground shadow-sm shadow-primary/25 transition-colors hover:bg-primary/90"
+            >
+              <span>Complete Profile</span>
+              <ArrowRight className="size-3.5" aria-hidden="true" />
+            </Link>
+          </div>
+        )}
+
         <section
           aria-label="Welcome summary"
           className="glass-card relative overflow-hidden rounded-2xl p-5 sm:p-6"
