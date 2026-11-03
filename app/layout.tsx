@@ -37,7 +37,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         inter.variable
       )}
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body
+        suppressHydrationWarning
+        className="flex min-h-full flex-col bg-background text-foreground"
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

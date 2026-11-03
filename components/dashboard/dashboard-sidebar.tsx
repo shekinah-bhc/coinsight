@@ -8,8 +8,8 @@ import {
   LayoutDashboard,
   PieChart,
   Settings,
-  ShieldCheck,
   TrendingUp,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -130,6 +130,17 @@ export function DashboardSidebarContent({
             Preferences
           </p>
           <Link
+            href="/settings/profile"
+            onClick={onNavigate}
+            className="group flex items-center gap-2.5 rounded-xl border border-transparent px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring/50"
+          >
+            <User
+              className="size-4 text-muted-foreground transition-colors group-hover:text-foreground"
+              aria-hidden="true"
+            />
+            <span>Profile Settings</span>
+          </Link>
+          <Link
             href="/dashboard#settings"
             onClick={onNavigate}
             className="group flex items-center gap-2.5 rounded-xl border border-transparent px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring/50"
@@ -143,21 +154,6 @@ export function DashboardSidebarContent({
         </div>
       </div>
 
-      <div className="border-t border-sidebar-border p-4">
-        <div className="glass-card rounded-xl p-3.5">
-          <div className="flex items-center gap-2">
-            <span className="flex size-6 items-center justify-center rounded-md bg-brand-secondary/15 text-brand-secondary">
-              <ShieldCheck className="size-3.5" aria-hidden="true" />
-            </span>
-            <p className="text-xs font-medium text-foreground">
-              SSR Session Active
-            </p>
-          </div>
-          <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
-            Protected via Supabase JWT claims and server-side route guards.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

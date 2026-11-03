@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Calendar,
   ChevronDown,
@@ -13,6 +14,7 @@ import { logoutAction } from "@/lib/auth/actions";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { DashboardSidebarContent } from "@/components/dashboard/dashboard-sidebar";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,9 +36,19 @@ interface DashboardHeaderProps {
   userEmail: string | undefined;
   userId: string;
   userRole: string | undefined;
+  userName?: string | null;
+  userAvatarUrl?: string | null;
+  onboardingCompleted?: boolean;
 }
 
-function getInitials(email: string | undefined): string {
+function getInitials(name: string | null | undefined, email: string | undefined): string {
+  if (name && name.trim()) {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
+    }
+    return parts[0]?.slice(0, 2).toUpperCase() || "CS";
+  }
   if (!email) {
     return "CS";
   }
@@ -52,10 +64,13 @@ export function DashboardHeader({
   userEmail,
   userId,
   userRole,
+  userName,
+  userAvatarUrl,
+  onboardingCompleted,
 }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const displayName = userEmail ?? "Authenticated User";
-  const initials = getInitials(userEmail);
+  const displayName = userName || userEmail || "Authenticated User";
+  const initials = getInitials(userName, userEmail);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-md sm:px-6 lg:px-8">
@@ -116,9 +131,12 @@ export function DashboardHeader({
               />
             }
           >
-            <span className="flex size-5 items-center justify-center rounded-md bg-primary/20 text-[10px] font-semibold text-primary">
-              {initials}
-            </span>
+            <Avatar className="size-5 shrink-0 rounded-md">
+              {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt={displayName} />}
+              <AvatarFallback className="rounded-md bg-primary/20 text-[10px] font-semibold text-primary">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
             <span className="hidden max-w-36 truncate sm:inline-block">
               {displayName}
             </span>
@@ -136,9 +154,12 @@ export function DashboardHeader({
             <DropdownMenuGroup>
               <DropdownMenuLabel className="px-2.5 py-2">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-primary/30 bg-primary/15 text-xs font-semibold text-primary">
-                    {initials}
-                  </span>
+                  <Avatar className="size-8 shrink-0 rounded-lg border border-primary/30">
+                    {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt={displayName} />}
+                    <AvatarFallback className="rounded-lg bg-primary/15 text-xs font-semibold text-primary">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-semibold text-foreground">
                       {displayName}
@@ -150,6 +171,27 @@ export function DashboardHeader({
                 </div>
               </DropdownMenuLabel>
             </DropdownMenuGroup>
+
+            <DropdownMenuSeparator />
+
+            <div className="p-0.5">
+              <Link
+                href={onboardingCompleted ? "/settings/profile" : "/onboarding"}
+                className="flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
+              >
+                <span className="flex items-center gap-2">
+                  <User className="size-3.5 text-primary" aria-hidden="true" />
+                  <span>
+                    {onboardingCompleted ? "Profile Settings" : "Complete Your Profile"}
+                  </span>
+                </span>
+                {!onboardingCompleted && (
+                  <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-500">
+                    Setup
+                  </span>
+                )}
+              </Link>
+            </div>
 
             <DropdownMenuSeparator />
 
@@ -191,17 +233,6 @@ export function DashboardHeader({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <form action={logoutAction} className="hidden sm:block">
-          <Button
-            type="submit"
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5 rounded-lg border-border bg-card/60 px-2.5 text-xs font-medium hover:bg-accent"
-          >
-            <LogOut className="size-3.5" aria-hidden="true" />
-            <span>Sign out</span>
-          </Button>
-        </form>
       </div>
     </header>
   );
