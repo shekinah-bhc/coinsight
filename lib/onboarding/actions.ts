@@ -156,7 +156,7 @@ export async function saveStep1Action(
   // Update profile in database
   const updatePayload: {
     full_name: string;
-    onboarding_step: number;
+    onboarding_step?: number;
     avatar_url?: string | null;
   } = {
     full_name: validation.data.fullName,
@@ -167,10 +167,20 @@ export async function saveStep1Action(
     updatePayload.avatar_url = avatarUrlToSave;
   }
 
-  const { error: updateError } = await supabase
+  let { error: updateError } = await supabase
     .from("profiles")
     .update(updatePayload)
     .eq("id", user.id);
+
+  // Fallback: If PostgREST schema cache does not have onboarding_step yet, retry without it
+  if (updateError && updateError.message && updateError.message.includes("onboarding_step")) {
+    delete updatePayload.onboarding_step;
+    const retry = await supabase
+      .from("profiles")
+      .update(updatePayload)
+      .eq("id", user.id);
+    updateError = retry.error;
+  }
 
   if (updateError) {
     return {
@@ -229,17 +239,35 @@ export async function saveStep2Action(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const step2Payload: {
+    country_code: string;
+    currency: string;
+    timezone: string;
+    monthly_income_range: MonthlyIncomeRange | null;
+    salary_credit_day: number | null;
+    onboarding_step?: number;
+  } = {
+    country_code: LOCKED_COUNTRY_CODE,
+    currency: LOCKED_CURRENCY_CODE,
+    timezone: validation.data.timezone,
+    monthly_income_range: (validation.data.monthlyIncomeRange as MonthlyIncomeRange) ?? null,
+    salary_credit_day: validation.data.salaryCreditDay ?? null,
+    onboarding_step: 3,
+  };
+
+  let { error } = await supabase
     .from("profiles")
-    .update({
-      country_code: LOCKED_COUNTRY_CODE,
-      currency: LOCKED_CURRENCY_CODE,
-      timezone: validation.data.timezone,
-      monthly_income_range: validation.data.monthlyIncomeRange ?? null,
-      salary_credit_day: validation.data.salaryCreditDay ?? null,
-      onboarding_step: 3,
-    })
+    .update(step2Payload)
     .eq("id", user.id);
+
+  if (error && error.message && error.message.includes("onboarding_step")) {
+    delete step2Payload.onboarding_step;
+    const retry = await supabase
+      .from("profiles")
+      .update(step2Payload)
+      .eq("id", user.id);
+    error = retry.error;
+  }
 
   if (error) {
     return {

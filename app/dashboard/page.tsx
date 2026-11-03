@@ -1,10 +1,12 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { requireAuth } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { resolveAvatarUrl } from "@/lib/onboarding/avatar-utils";
+import { getDashboardMetrics } from "@/lib/dashboard/actions";
+import { formatPaiseToRupees } from "@/lib/finance/money";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { OverviewCards } from "@/components/dashboard/overview-cards";
@@ -34,15 +36,23 @@ function getDisplayUserName(email: string | undefined): string {
 async function DashboardSessionContent() {
   const user = await requireAuth();
   const supabase = await createClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
+
+  const [{ data: profile }, metrics] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle(),
+    getDashboardMetrics(),
+  ]);
 
   const displayName = profile?.full_name || getDisplayUserName(user.email);
   const showOnboardingBanner = !profile?.onboarding_completed;
   const resolvedAvatarUrl = await resolveAvatarUrl(profile?.avatar_url);
+
+  const formattedNetPosition = `${metrics.netCashFlow >= 0 ? "+" : "-"}${formatPaiseToRupees(
+    Math.abs(metrics.netCashFlow)
+  )}`;
 
   return (
     <div className="flex min-w-0 flex-1 flex-col">
@@ -97,16 +107,7 @@ async function DashboardSessionContent() {
 
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-secondary/30 bg-brand-secondary/10 px-2.5 py-0.5 text-[11px] font-medium text-brand-secondary">
-                  <ShieldCheck className="size-3" aria-hidden="true" />
-                  <span>Verified Session</span>
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
-                  <Sparkles className="size-3" aria-hidden="true" />
-                  <span>Financial Intelligence</span>
-                </span>
-              </div>
+            
               <h1 className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
                 Welcome back, {displayName}
               </h1>
@@ -122,26 +123,34 @@ async function DashboardSessionContent() {
             <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface-secondary/60 px-4 py-3 text-xs dark:bg-white/[0.02]">
               <div>
                 <p className="text-[11px] text-muted-foreground">
-                  Monthly Net Position
+                  Monthly Net Cash Flow
                 </p>
                 <p className="font-mono text-sm font-semibold text-brand-secondary tabular-nums">
-                  +$5,765.80
+                  {formattedNetPosition}
                 </p>
               </div>
               <div className="h-7 w-px bg-border" aria-hidden="true" />
               <div>
                 <p className="text-[11px] text-muted-foreground">
-                  Budget Health
+                  Savings Rate
                 </p>
-                <p className="font-medium text-foreground">On Track (88%)</p>
+                <p className="font-medium text-foreground font-mono">
+                  {metrics.savingsRate}%
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        <OverviewCards />
+        {/* Real Live Database Metrics */}
+        <OverviewCards metrics={metrics} />
 
-        <RecentTransactions />
+        {/* Real Live Recent Transactions & Category Allocations */}
+        <RecentTransactions
+          recentTransactions={metrics.recentTransactions}
+          categorySpending={metrics.categorySpending}
+          currentMonthName={metrics.currentMonthName}
+        />
       </main>
     </div>
   );

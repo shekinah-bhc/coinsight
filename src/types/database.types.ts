@@ -130,6 +130,8 @@ export interface Database {
           opening_balance: number;
           credit_limit: number | null;
           institution_name: string | null;
+          institution: string | null;
+          notes: string | null;
           account_number_last_four: string | null;
           color: string | null;
           icon: string | null;
@@ -146,6 +148,8 @@ export interface Database {
           opening_balance?: number;
           credit_limit?: number | null;
           institution_name?: string | null;
+          institution?: string | null;
+          notes?: string | null;
           account_number_last_four?: string | null;
           color?: string | null;
           icon?: string | null;
@@ -162,6 +166,8 @@ export interface Database {
           opening_balance?: number;
           credit_limit?: number | null;
           institution_name?: string | null;
+          institution?: string | null;
+          notes?: string | null;
           account_number_last_four?: string | null;
           color?: string | null;
           icon?: string | null;
@@ -404,6 +410,11 @@ export interface Database {
           total_expense: string;
           total_outgoing_transfers: string;
           total_incoming_transfers: string;
+          institution: string | null;
+          notes: string | null;
+          credit_limit: number | null;
+          has_activity: boolean;
+          transaction_count: number;
           created_at: string;
           updated_at: string;
         };
@@ -415,6 +426,16 @@ export interface Database {
             referencedColumns: ['id'];
           },
         ];
+      };
+      net_worth_summary: {
+        Row: {
+          user_id: string;
+          total_assets: string;
+          total_liabilities: string;
+          net_worth: string;
+          active_accounts_count: number;
+        };
+        Relationships: [];
       };
     };
 
@@ -441,3 +462,15 @@ export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 export type UserFinancialGoal = Database['public']['Tables']['user_financial_goals']['Row'];
 export type UserFinancialGoalInsert = Database['public']['Tables']['user_financial_goals']['Insert'];
 
+
+export type AccountBalance = Database['public']['Views']['account_balances']['Row'];
+export type NetWorthSummary = Database['public']['Views']['net_worth_summary']['Row'];
+export type Account = Database['public']['Tables']['accounts']['Row'];
+export type AccountInsert = Database['public']['Tables']['accounts']['Insert'];
+export type AccountUpdate = Database['public']['Tables']['accounts']['Update'];
+export type Transaction = Database['public']['Tables']['transactions']['Row'];
+export type TransactionInsert = Database['public']['Tables']['transactions']['Insert'];
+export type TransactionUpdate = Database['public']['Tables']['transactions']['Update'];
+export type Category = Database['public']['Tables']['categories']['Row'];
+export type CategoryInsert = Database['public']['Tables']['categories']['Insert'];
+export type CategoryUpdate = Database['public']['Tables']['categories']['Update'];

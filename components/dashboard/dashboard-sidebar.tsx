@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   ArrowLeftRight,
   BarChart3,
@@ -17,7 +18,6 @@ interface NavItem {
   label: string;
   href: string;
   icon: typeof LayoutDashboard;
-  active?: boolean;
   badge?: string;
 }
 
@@ -26,19 +26,16 @@ const PRIMARY_NAV: NavItem[] = [
     label: "Overview",
     href: "/dashboard",
     icon: LayoutDashboard,
-    active: true,
   },
   {
     label: "Transactions",
-    href: "/dashboard#transactions",
+    href: "/transactions",
     icon: ArrowLeftRight,
-    badge: "Preview",
   },
   {
     label: "Accounts & Cards",
-    href: "/dashboard#accounts",
+    href: "/accounts",
     icon: CreditCard,
-    badge: "Preview",
   },
   {
     label: "Budgets",
@@ -61,6 +58,8 @@ interface DashboardSidebarContentProps {
 export function DashboardSidebarContent({
   onNavigate,
 }: DashboardSidebarContentProps) {
+  const pathname = usePathname();
+
   return (
     <div className="flex h-full flex-col justify-between bg-sidebar text-sidebar-foreground">
       <div className="space-y-6 p-5">
@@ -89,15 +88,23 @@ export function DashboardSidebarContent({
           <nav aria-label="Main navigation" className="space-y-1">
             {PRIMARY_NAV.map((item) => {
               const Icon = item.icon;
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === "/dashboard"
+                  : pathname === item.href ||
+                    (item.href !== "/dashboard" &&
+                      !item.href.includes("#") &&
+                      pathname.startsWith(item.href));
+
               return (
                 <Link
                   key={item.label}
                   href={item.href}
                   onClick={onNavigate}
-                  aria-current={item.active ? "page" : undefined}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "group flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring/50",
-                    item.active
+                    isActive
                       ? "border border-primary/25 bg-sidebar-accent text-foreground shadow-2xs"
                       : "border border-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
@@ -106,7 +113,7 @@ export function DashboardSidebarContent({
                     <Icon
                       className={cn(
                         "size-4 transition-colors",
-                        item.active
+                        isActive
                           ? "text-primary"
                           : "text-muted-foreground group-hover:text-foreground"
                       )}
@@ -132,10 +139,21 @@ export function DashboardSidebarContent({
           <Link
             href="/settings/profile"
             onClick={onNavigate}
-            className="group flex items-center gap-2.5 rounded-xl border border-transparent px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring/50"
+            aria-current={pathname === "/settings/profile" ? "page" : undefined}
+            className={cn(
+              "group flex items-center gap-2.5 rounded-xl border px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring/50",
+              pathname === "/settings/profile"
+                ? "border-primary/25 bg-sidebar-accent text-foreground shadow-2xs"
+                : "border-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
+            )}
           >
             <User
-              className="size-4 text-muted-foreground transition-colors group-hover:text-foreground"
+              className={cn(
+                "size-4 transition-colors",
+                pathname === "/settings/profile"
+                  ? "text-primary"
+                  : "text-muted-foreground group-hover:text-foreground"
+              )}
               aria-hidden="true"
             />
             <span>Profile Settings</span>
@@ -153,7 +171,6 @@ export function DashboardSidebarContent({
           </Link>
         </div>
       </div>
-
     </div>
   );
 }
@@ -170,4 +187,3 @@ export function DashboardSidebar() {
     </aside>
   );
 }
-
