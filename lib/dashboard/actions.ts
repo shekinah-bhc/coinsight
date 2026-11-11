@@ -2,6 +2,11 @@
 
 import { requireAuth } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import {
+  getBudgetsData,
+  type BudgetOverviewMetrics,
+  type BudgetWithSpending,
+} from "@/lib/budgets/actions";
 import type { NetWorthSummary, TransactionSource, TransactionType } from "@/src/types/database.types";
 import type { RawJoinedTransaction, TransactionItem } from "@/lib/transactions/actions";
 
@@ -23,6 +28,8 @@ export interface DashboardMetrics {
   recentTransactions: TransactionItem[];
   categorySpending: CategorySpending[];
   currentMonthName: string;
+  budgetOverview: BudgetOverviewMetrics;
+  topBudgets: BudgetWithSpending[];
 }
 
 /**
@@ -48,8 +55,8 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   const currentMonthName = new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, month: "long" }).format(now);
   const startOfMonth = `${currentYear}-${currentMonthNum}-01`;
 
-  // 2. Fetch net worth, current month's transactions, and recent transactions in parallel
-  const [netWorthResult, currentMonthTxResult, recentTxResult] = await Promise.all([
+  // 2. Fetch net worth, current month's transactions, recent transactions, and monthly budgets in parallel
+  const [netWorthResult, currentMonthTxResult, recentTxResult, budgetsData] = await Promise.all([
     supabase
       .from("net_worth_summary")
       .select("*")
@@ -85,6 +92,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
       .order("transaction_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(6),
+    getBudgetsData(),
   ]);
 
   if (netWorthResult.error) {
@@ -179,5 +187,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     recentTransactions,
     categorySpending,
     currentMonthName,
+    budgetOverview: budgetsData.overview,
+    topBudgets: budgetsData.budgets.slice(0, 5),
   };
 }

@@ -40,24 +40,7 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
-          <nav aria-label="Footer Navigation" className="flex flex-wrap items-center justify-center gap-6 text-xs">
-            <a href="#features" className="transition-colors hover:text-foreground">
-              Features
-            </a>
-            <a href="#how-it-works" className="transition-colors hover:text-foreground">
-              How It Works
-            </a>
-            <a href="#privacy" className="transition-colors hover:text-foreground">
-              Privacy & Security
-            </a>
-            <Link href="/login" className="transition-colors hover:text-foreground">
-              Log In
-            </Link>
-            <Link href="/register" className="transition-colors hover:text-foreground">
-              Get Started
-            </Link>
-          </nav>
+       
         </div>
 
         {/* Copyright notice */}

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowRight } from "lucide-react";
 import { requireAuth } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { resolveAvatarUrl } from "@/lib/onboarding/avatar-utils";
@@ -10,6 +10,7 @@ import { formatPaiseToRupees } from "@/lib/finance/money";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { OverviewCards } from "@/components/dashboard/overview-cards";
+import { BudgetSummaryWidget } from "@/components/dashboard/budget-summary-widget";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -74,7 +75,7 @@ async function DashboardSessionContent() {
           >
             <div className="flex items-start gap-3.5">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary shadow-sm">
-                <Sparkles className="size-4.5" aria-hidden="true" />
+                <AlertCircle className="size-4.5" aria-hidden="true" />
               </div>
               <div className="space-y-0.5">
                 <p className="text-xs font-semibold text-foreground sm:text-sm">
@@ -109,7 +110,7 @@ async function DashboardSessionContent() {
             <div className="space-y-1.5">
             
               <h1 className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                Welcome back, {displayName}
+                Welcome, {displayName}
               </h1>
               <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
                 Signed in as{" "}
@@ -144,6 +145,12 @@ async function DashboardSessionContent() {
 
         {/* Real Live Database Metrics */}
         <OverviewCards metrics={metrics} />
+
+        {/* Monthly Budget Summary & Utilization Alerts */}
+        <BudgetSummaryWidget
+          overview={metrics.budgetOverview}
+          topBudgets={metrics.topBudgets}
+        />
 
         {/* Real Live Recent Transactions & Category Allocations */}
         <RecentTransactions

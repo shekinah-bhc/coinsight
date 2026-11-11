@@ -19,18 +19,21 @@ import type { TransactionFilterParams } from "@/lib/validations/transactions";
 
 interface TransactionsViewProps {
   initialData: TransactionsPageData;
+  initialFilters?: Partial<TransactionFilterParams>;
 }
 
-export function TransactionsView({ initialData }: TransactionsViewProps) {
+export function TransactionsView({ initialData, initialFilters }: TransactionsViewProps) {
   const [data, setData] = useState<TransactionsPageData>(initialData);
   const [filters, setFilters] = useState<TransactionFilterParams>({
-    search: "",
-    type: "all",
-    accountId: "all",
-    categoryId: "all",
-    sortBy: "date_desc",
-    page: 1,
-    pageSize: 20,
+    search: initialFilters?.search ?? "",
+    type: initialFilters?.type ?? "all",
+    accountId: initialFilters?.accountId ?? "all",
+    categoryId: initialFilters?.categoryId ?? "all",
+    startDate: initialFilters?.startDate,
+    endDate: initialFilters?.endDate,
+    sortBy: initialFilters?.sortBy ?? "date_desc",
+    page: initialFilters?.page ?? 1,
+    pageSize: initialFilters?.pageSize ?? 20,
   });
 
   const [isPending, startTransition] = useTransition();

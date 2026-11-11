@@ -194,6 +194,7 @@ export interface Database {
           icon: string | null;
           color: string | null;
           is_default: boolean;
+          is_active: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -205,6 +206,7 @@ export interface Database {
           icon?: string | null;
           color?: string | null;
           is_default?: boolean;
+          is_active?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -216,6 +218,7 @@ export interface Database {
           icon?: string | null;
           color?: string | null;
           is_default?: boolean;
+          is_active?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -474,3 +477,7 @@ export type TransactionUpdate = Database['public']['Tables']['transactions']['Up
 export type Category = Database['public']['Tables']['categories']['Row'];
 export type CategoryInsert = Database['public']['Tables']['categories']['Insert'];
 export type CategoryUpdate = Database['public']['Tables']['categories']['Update'];
+export type Budget = Database['public']['Tables']['budgets']['Row'];
+export type BudgetInsert = Database['public']['Tables']['budgets']['Insert'];
+export type BudgetUpdate = Database['public']['Tables']['budgets']['Update'];
+

@@ -105,7 +105,32 @@ export function AddAccountDialog({
             <input type="hidden" name="accountType" value={accountType} />
             <Select value={accountType} onValueChange={(val) => setAccountType(val as AccountType)}>
               <SelectTrigger id="accountType" className="w-full">
-                <SelectValue placeholder="Select type" />
+                <SelectValue placeholder="Select type">
+                  {accountType === "bank" && (
+                    <div className="flex items-center gap-2">
+                      <Building2 className="size-4 text-primary" />
+                      <span>Bank Account (Savings / Current)</span>
+                    </div>
+                  )}
+                  {accountType === "credit_card" && (
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="size-4 text-amber-500" />
+                      <span>Credit Card</span>
+                    </div>
+                  )}
+                  {accountType === "cash" && (
+                    <div className="flex items-center gap-2">
+                      <Wallet className="size-4 text-emerald-500" />
+                      <span>Physical Cash</span>
+                    </div>
+                  )}
+                  {accountType === "wallet" && (
+                    <div className="flex items-center gap-2">
+                      <Wallet className="size-4 text-cyan-500" />
+                      <span>Digital Wallet (Paytm, PhonePe, etc.)</span>
+                    </div>
+                  )}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="bank">

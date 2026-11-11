@@ -6,8 +6,6 @@ import { Hero } from "@/components/landing/hero";
 import { FinancialOverview } from "@/components/landing/financial-overview";
 import { Features } from "@/components/landing/features";
 import { HowItWorks } from "@/components/landing/how-it-works";
-import { PrivacySecurity } from "@/components/landing/privacy-security";
-import { CtaSection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
 
 export const metadata: Metadata = {
@@ -48,8 +46,6 @@ async function LandingDynamic() {
         <FinancialOverview />
         <Features />
         <HowItWorks />
-        <PrivacySecurity />
-        <CtaSection isAuthenticated={isAuthenticated} />
       </main>
       <Footer />
     </>
@@ -65,8 +61,6 @@ function LandingStaticFallback() {
         <FinancialOverview />
         <Features />
         <HowItWorks />
-        <PrivacySecurity />
-        <CtaSection isAuthenticated={false} />
       </main>
       <Footer />
     </>

@@ -76,8 +76,11 @@ function EditTransactionForm({
   const [notes, setNotes] = useState<string>(transaction.notes || "");
 
   const matchingCategories = useMemo(
-    () => categories.filter((c) => c.type === type),
-    [categories, type]
+    () =>
+      categories.filter(
+        (c) => c.type === type && (c.is_active !== false || c.id === transaction.category_id)
+      ),
+    [categories, type, transaction.category_id]
   );
 
   const handleTypeChange = (newType: TransactionType) => {
@@ -88,6 +91,11 @@ function EditTransactionForm({
   const selectedAccount = useMemo(
     () => activeAccounts.find((a) => a.account_id === accountId),
     [activeAccounts, accountId]
+  );
+
+  const selectedCategory = useMemo(
+    () => matchingCategories.find((c) => c.id === categoryId),
+    [matchingCategories, categoryId]
   );
 
   const isCreditCard = selectedAccount?.account_type === "credit_card";
@@ -180,7 +188,20 @@ function EditTransactionForm({
         </Label>
         <Select value={accountId} onValueChange={(val) => setAccountId(val ?? "")}>
           <SelectTrigger id="edit-account" className="w-full">
-            <SelectValue placeholder="Select account" />
+            <SelectValue placeholder="Select account">
+              {selectedAccount ? (
+                <div className="flex items-center justify-between w-full gap-3">
+                  <span className="truncate font-medium">{selectedAccount.account_name}</span>
+                  <span className="font-mono text-xs text-muted-foreground">
+                    ({formatSqlNumericToRupees(selectedAccount.current_balance)})
+                  </span>
+                </div>
+              ) : transaction.account ? (
+                <span className="truncate font-medium">{transaction.account.name}</span>
+              ) : (
+                <span className="text-muted-foreground">Select account</span>
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {activeAccounts.map((acc) => (
@@ -215,7 +236,24 @@ function EditTransactionForm({
         </div>
         <Select value={categoryId} onValueChange={(val) => setCategoryId(val ?? "none")}>
           <SelectTrigger id="edit-category" className="w-full">
-            <SelectValue placeholder="Select category" />
+            <SelectValue placeholder="Select category">
+              {selectedCategory ? (
+                <div className="flex items-center gap-2">
+                  <span
+                    className="flex size-4 items-center justify-center rounded text-white text-[10px]"
+                    style={{ backgroundColor: selectedCategory.color || "#6366F1" }}
+                  >
+                    <CategoryIcon iconName={selectedCategory.icon} className="size-2.5" />
+                  </span>
+                  <span className="truncate font-medium">
+                    {selectedCategory.name}
+                    {selectedCategory.is_active === false ? " (Archived)" : ""}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-muted-foreground">Uncategorized</span>
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">
@@ -230,7 +268,10 @@ function EditTransactionForm({
                   >
                     <CategoryIcon iconName={cat.icon} className="size-3" />
                   </span>
-                  <span>{cat.name}</span>
+                  <span>
+                    {cat.name}
+                    {cat.is_active === false ? " (Archived)" : ""}
+                  </span>
                 </div>
               </SelectItem>
             ))}

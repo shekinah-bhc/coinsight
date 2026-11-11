@@ -44,9 +44,53 @@ function TransactionsLoadingSkeleton() {
   );
 }
 
-async function TransactionsContent() {
+interface TransactionsPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+async function TransactionsContent({ searchParams }: TransactionsPageProps) {
   const user = await requireAuth();
   const supabase = await createClient();
+  const resolvedParams = await searchParams;
+
+  const initialCategoryId =
+    typeof resolvedParams.categoryId === "string" && resolvedParams.categoryId.trim() !== ""
+      ? resolvedParams.categoryId.trim()
+      : "all";
+
+  const initialType =
+    resolvedParams.type === "income" || resolvedParams.type === "expense"
+      ? resolvedParams.type
+      : "all";
+
+  const initialAccountId =
+    typeof resolvedParams.accountId === "string" && resolvedParams.accountId.trim() !== ""
+      ? resolvedParams.accountId.trim()
+      : "all";
+
+  const initialSearch =
+    typeof resolvedParams.search === "string" ? resolvedParams.search : "";
+
+  const initialStartDate =
+    typeof resolvedParams.startDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(resolvedParams.startDate)
+      ? resolvedParams.startDate
+      : undefined;
+
+  const initialEndDate =
+    typeof resolvedParams.endDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(resolvedParams.endDate)
+      ? resolvedParams.endDate
+      : undefined;
+
+  const initialFilters = {
+    categoryId: initialCategoryId,
+    type: initialType as "all" | "income" | "expense",
+    accountId: initialAccountId,
+    search: initialSearch,
+    startDate: initialStartDate,
+    endDate: initialEndDate,
+    page: 1,
+    pageSize: 20,
+  };
 
   const [{ data: profile }, transactionsData] = await Promise.all([
     supabase
@@ -54,7 +98,7 @@ async function TransactionsContent() {
       .select("*")
       .eq("id", user.id)
       .maybeSingle(),
-    getTransactionsData(),
+    getTransactionsData(initialFilters),
   ]);
 
   const resolvedAvatarUrl = await resolveAvatarUrl(profile?.avatar_url);
@@ -97,18 +141,18 @@ async function TransactionsContent() {
         </div>
 
         {/* Main Transactions Interactive View */}
-        <TransactionsView initialData={transactionsData} />
+        <TransactionsView initialData={transactionsData} initialFilters={initialFilters} />
       </main>
     </div>
   );
 }
 
-export default function TransactionsPage() {
+export default function TransactionsPage({ searchParams }: TransactionsPageProps) {
   return (
     <div className="flex min-h-screen bg-background">
       <DashboardSidebar />
       <Suspense fallback={<TransactionsLoadingSkeleton />}>
-        <TransactionsContent />
+        <TransactionsContent searchParams={searchParams} />
       </Suspense>
     </div>
   );

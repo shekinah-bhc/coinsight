@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   PieChart,
   Settings,
+  Tags,
   TrendingUp,
   User,
 } from "lucide-react";
@@ -38,10 +39,14 @@ const PRIMARY_NAV: NavItem[] = [
     icon: CreditCard,
   },
   {
+    label: "Categories",
+    href: "/categories",
+    icon: Tags,
+  },
+  {
     label: "Budgets",
-    href: "/dashboard#budgets",
+    href: "/budgets",
     icon: PieChart,
-    badge: "Preview",
   },
   {
     label: "Cash Flow Analytics",
