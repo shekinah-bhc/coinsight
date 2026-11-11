@@ -642,6 +642,7 @@ export async function createCategoryAction(
   }
 
   revalidatePath("/categories");
+  revalidatePath("/budgets");
   revalidatePath("/transactions");
   revalidatePath("/dashboard");
 
@@ -802,6 +803,7 @@ export async function updateCategoryAction(
   }
 
   revalidatePath("/categories");
+  revalidatePath("/budgets");
   revalidatePath("/transactions");
   revalidatePath("/dashboard");
 
@@ -886,6 +888,7 @@ export async function archiveCategoryAction(
   }
 
   revalidatePath("/categories");
+  revalidatePath("/budgets");
   revalidatePath("/transactions");
   revalidatePath("/dashboard");
 
@@ -968,6 +971,7 @@ export async function reactivateCategoryAction(
   }
 
   revalidatePath("/categories");
+  revalidatePath("/budgets");
   revalidatePath("/transactions");
   revalidatePath("/dashboard");
 

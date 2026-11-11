@@ -45,9 +45,8 @@ const PRIMARY_NAV: NavItem[] = [
   },
   {
     label: "Budgets",
-    href: "/dashboard#budgets",
+    href: "/budgets",
     icon: PieChart,
-    badge: "Preview",
   },
   {
     label: "Cash Flow Analytics",

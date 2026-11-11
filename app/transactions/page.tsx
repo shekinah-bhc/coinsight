@@ -71,11 +71,23 @@ async function TransactionsContent({ searchParams }: TransactionsPageProps) {
   const initialSearch =
     typeof resolvedParams.search === "string" ? resolvedParams.search : "";
 
+  const initialStartDate =
+    typeof resolvedParams.startDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(resolvedParams.startDate)
+      ? resolvedParams.startDate
+      : undefined;
+
+  const initialEndDate =
+    typeof resolvedParams.endDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(resolvedParams.endDate)
+      ? resolvedParams.endDate
+      : undefined;
+
   const initialFilters = {
     categoryId: initialCategoryId,
     type: initialType as "all" | "income" | "expense",
     accountId: initialAccountId,
     search: initialSearch,
+    startDate: initialStartDate,
+    endDate: initialEndDate,
     page: 1,
     pageSize: 20,
   };

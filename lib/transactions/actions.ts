@@ -445,6 +445,7 @@ export async function createTransactionAction(
 
   revalidatePath("/transactions");
   revalidatePath("/categories");
+  revalidatePath("/budgets");
   revalidatePath("/dashboard");
   revalidatePath("/accounts");
 
@@ -632,6 +633,7 @@ export async function updateTransactionAction(
 
   revalidatePath("/transactions");
   revalidatePath("/categories");
+  revalidatePath("/budgets");
   revalidatePath("/dashboard");
   revalidatePath("/accounts");
 
@@ -666,6 +668,7 @@ export async function deleteTransactionAction(
 
   revalidatePath("/transactions");
   revalidatePath("/categories");
+  revalidatePath("/budgets");
   revalidatePath("/dashboard");
   revalidatePath("/accounts");
 

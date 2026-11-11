@@ -89,6 +89,11 @@ function AddTransactionForm({
     [activeAccounts, accountId]
   );
 
+  const selectedCategory = useMemo(
+    () => matchingCategories.find((c) => c.id === categoryId),
+    [matchingCategories, categoryId]
+  );
+
   const isCreditCard = selectedAccount?.account_type === "credit_card";
 
   useEffect(() => {
@@ -179,7 +184,18 @@ function AddTransactionForm({
         </Label>
         <Select value={accountId} onValueChange={(val) => setAccountId(val ?? "")}>
           <SelectTrigger id="account-select" className="w-full">
-            <SelectValue placeholder="Select account" />
+            <SelectValue placeholder="Select account">
+              {selectedAccount ? (
+                <div className="flex items-center justify-between w-full gap-3">
+                  <span className="truncate font-medium">{selectedAccount.account_name}</span>
+                  <span className="font-mono text-xs text-muted-foreground">
+                    ({formatSqlNumericToRupees(selectedAccount.current_balance)})
+                  </span>
+                </div>
+              ) : (
+                <span className="text-muted-foreground">Select account</span>
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {activeAccounts.map((acc) => (
@@ -217,7 +233,21 @@ function AddTransactionForm({
         </div>
         <Select value={categoryId} onValueChange={(val) => setCategoryId(val ?? "none")}>
           <SelectTrigger id="category-select" className="w-full">
-            <SelectValue placeholder="Select category" />
+            <SelectValue placeholder="Select category">
+              {selectedCategory ? (
+                <div className="flex items-center gap-2">
+                  <span
+                    className="flex size-4 items-center justify-center rounded text-white text-[10px]"
+                    style={{ backgroundColor: selectedCategory.color || "#6366F1" }}
+                  >
+                    <CategoryIcon iconName={selectedCategory.icon} className="size-2.5" />
+                  </span>
+                  <span className="truncate font-medium">{selectedCategory.name}</span>
+                </div>
+              ) : (
+                <span className="text-muted-foreground">Uncategorized</span>
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">

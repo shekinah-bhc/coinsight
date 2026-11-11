@@ -120,7 +120,15 @@ export function CategoriesTabs({
             onValueChange={(val) => onDatePresetChange((val as CategoryDatePreset) ?? "this_month")}
           >
             <SelectTrigger className="h-9 min-w-[160px] text-xs">
-              <SelectValue placeholder="Select period" />
+              <SelectValue placeholder="Select period">
+                {{
+                  this_month: "This Month",
+                  last_month: "Last Month",
+                  last_3_months: "Last 3 Months",
+                  this_year: "This Year",
+                  custom: "Custom Date Range",
+                }[datePreset] ?? "This Month"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="this_month">This Month</SelectItem>
@@ -198,7 +206,15 @@ export function CategoriesTabs({
             onValueChange={(val) => onSortChange((val as CategorySortOption) ?? "amount_desc")}
           >
             <SelectTrigger className="h-9 min-w-[175px] text-xs">
-              <SelectValue placeholder="Sort categories" />
+              <SelectValue placeholder="Sort categories">
+                {{
+                  amount_desc: "Amount: Highest First",
+                  amount_asc: "Amount: Lowest First",
+                  transactions_desc: "Most Transactions",
+                  name_asc: "Name: A to Z",
+                  name_desc: "Name: Z to A",
+                }[sortBy] ?? "Amount: Highest First"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="amount_desc">Amount: Highest First</SelectItem>

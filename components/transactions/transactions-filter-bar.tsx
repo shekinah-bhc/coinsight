@@ -32,6 +32,23 @@ export function TransactionsFilterBar({
       ? categories.filter((c) => c.type === filters.type)
       : categories;
 
+  const selectedFilterAccount =
+    filters.accountId && filters.accountId !== "all"
+      ? accounts.find((a) => a.account_id === filters.accountId)
+      : null;
+
+  const selectedFilterCategory =
+    filters.categoryId && filters.categoryId !== "all"
+      ? categories.find((c) => c.id === filters.categoryId)
+      : null;
+
+  const sortLabels: Record<string, string> = {
+    date_desc: "Date: Newest First",
+    date_asc: "Date: Oldest First",
+    amount_desc: "Amount: Highest First",
+    amount_asc: "Amount: Lowest First",
+  };
+
   return (
     <div className="space-y-3">
       {/* Search & Type filter row */}
@@ -86,7 +103,11 @@ export function TransactionsFilterBar({
           onValueChange={(val) => onFilterChange({ accountId: val ?? "all", page: 1 })}
         >
           <SelectTrigger className="h-8 text-xs w-auto min-w-[130px]">
-            <SelectValue placeholder="All Accounts" />
+            <SelectValue placeholder="All Accounts">
+              {selectedFilterAccount
+                ? `${selectedFilterAccount.account_name}${!selectedFilterAccount.is_active ? " (Archived)" : ""}`
+                : "All Accounts"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Accounts</SelectItem>
@@ -104,7 +125,11 @@ export function TransactionsFilterBar({
           onValueChange={(val) => onFilterChange({ categoryId: val ?? "all", page: 1 })}
         >
           <SelectTrigger className="h-8 text-xs w-auto min-w-[130px]">
-            <SelectValue placeholder="All Categories" />
+            <SelectValue placeholder="All Categories">
+              {selectedFilterCategory
+                ? `${selectedFilterCategory.name} (${selectedFilterCategory.type})${selectedFilterCategory.is_active === false ? " [Archived]" : ""}`
+                : "All Categories"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
@@ -127,7 +152,9 @@ export function TransactionsFilterBar({
           }
         >
           <SelectTrigger className="h-8 text-xs w-auto min-w-[140px] ml-auto">
-            <SelectValue placeholder="Sort By" />
+            <SelectValue placeholder="Sort By">
+              {sortLabels[filters.sortBy ?? "date_desc"] ?? "Date: Newest First"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="date_desc">Date: Newest First</SelectItem>

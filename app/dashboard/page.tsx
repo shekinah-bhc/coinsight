@@ -10,6 +10,7 @@ import { formatPaiseToRupees } from "@/lib/finance/money";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { OverviewCards } from "@/components/dashboard/overview-cards";
+import { BudgetSummaryWidget } from "@/components/dashboard/budget-summary-widget";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -144,6 +145,12 @@ async function DashboardSessionContent() {
 
         {/* Real Live Database Metrics */}
         <OverviewCards metrics={metrics} />
+
+        {/* Monthly Budget Summary & Utilization Alerts */}
+        <BudgetSummaryWidget
+          overview={metrics.budgetOverview}
+          topBudgets={metrics.topBudgets}
+        />
 
         {/* Real Live Recent Transactions & Category Allocations */}
         <RecentTransactions
