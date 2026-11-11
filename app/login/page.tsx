@@ -23,8 +23,8 @@ async function LoginContent({ searchParams }: LoginPageProps) {
 
   const nextPath =
     typeof params.next === "string" &&
-    params.next.startsWith("/") &&
-    !params.next.startsWith("//")
+      params.next.startsWith("/") &&
+      !params.next.startsWith("//")
       ? params.next
       : undefined;
 
