@@ -76,8 +76,11 @@ function EditTransactionForm({
   const [notes, setNotes] = useState<string>(transaction.notes || "");
 
   const matchingCategories = useMemo(
-    () => categories.filter((c) => c.type === type),
-    [categories, type]
+    () =>
+      categories.filter(
+        (c) => c.type === type && (c.is_active !== false || c.id === transaction.category_id)
+      ),
+    [categories, type, transaction.category_id]
   );
 
   const handleTypeChange = (newType: TransactionType) => {
@@ -230,7 +233,10 @@ function EditTransactionForm({
                   >
                     <CategoryIcon iconName={cat.icon} className="size-3" />
                   </span>
-                  <span>{cat.name}</span>
+                  <span>
+                    {cat.name}
+                    {cat.is_active === false ? " (Archived)" : ""}
+                  </span>
                 </div>
               </SelectItem>
             ))}

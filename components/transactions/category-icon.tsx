@@ -1,31 +1,44 @@
 "use client";
 
 import {
+  BookOpen,
   Briefcase,
   Building2,
   CalendarSync,
   Car,
+  Coffee,
+  Coins,
+  Dumbbell,
   Film,
+  Gamepad2,
   Gift,
   GraduationCap,
   HeartPulse,
   Home,
+  Landmark,
   Laptop,
   MinusCircle,
+  Music,
   PiggyBank,
   Plane,
   PlusCircle,
+  Receipt,
   RotateCcw,
+  ShieldCheck,
+  Shirt,
   ShoppingBag,
+  ShoppingCart,
+  Smartphone,
   Sparkles,
   Tag,
   TrendingUp,
   Utensils,
   Wallet,
+  Wrench,
   Zap,
 } from "lucide-react";
 
-interface CategoryIconProps {
+export interface CategoryIconProps {
   iconName: string | null | undefined;
   className?: string;
 }
@@ -48,6 +61,10 @@ export function CategoryIcon({ iconName, className = "size-4" }: CategoryIconPro
       return <PlusCircle className={className} />;
     case "utensils":
       return <Utensils className={className} />;
+    case "shoppingcart":
+      return <ShoppingCart className={className} />;
+    case "coffee":
+      return <Coffee className={className} />;
     case "car":
       return <Car className={className} />;
     case "shoppingbag":
@@ -74,8 +91,29 @@ export function CategoryIcon({ iconName, className = "size-4" }: CategoryIconPro
       return <Wallet className={className} />;
     case "piggybank":
       return <PiggyBank className={className} />;
+    case "smartphone":
+      return <Smartphone className={className} />;
+    case "dumbbell":
+      return <Dumbbell className={className} />;
+    case "shieldcheck":
+      return <ShieldCheck className={className} />;
+    case "landmark":
+      return <Landmark className={className} />;
+    case "coins":
+      return <Coins className={className} />;
+    case "receipt":
+      return <Receipt className={className} />;
+    case "wrench":
+      return <Wrench className={className} />;
+    case "bookopen":
+      return <BookOpen className={className} />;
+    case "music":
+      return <Music className={className} />;
+    case "gamepad2":
+      return <Gamepad2 className={className} />;
+    case "shirt":
+      return <Shirt className={className} />;
     default:
       return <Tag className={className} />;
   }
 }
-

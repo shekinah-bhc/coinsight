@@ -110,7 +110,7 @@ export function TransactionsFilterBar({
             <SelectItem value="all">All Categories</SelectItem>
             {filteredCategories.map((cat) => (
               <SelectItem key={cat.id} value={cat.id}>
-                {cat.name} ({cat.type})
+                {cat.name} ({cat.type}){cat.is_active === false ? " [Archived]" : ""}
               </SelectItem>
             ))}
           </SelectContent>

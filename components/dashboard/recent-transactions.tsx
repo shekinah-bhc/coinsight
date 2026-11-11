@@ -196,8 +196,15 @@ export function RecentTransactions({
           )}
         </div>
 
-        <div className="pt-4 border-t border-border/50 text-[11px] text-muted-foreground">
-          <p>Transfers between accounts are excluded to prevent double counting.</p>
+        <div className="pt-4 border-t border-border/50 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+          <p className="truncate">Transfers excluded from spending.</p>
+          <Link
+            href="/categories"
+            className="inline-flex shrink-0 items-center gap-1 font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            <span>Categories</span>
+            <ArrowRight className="size-3" aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>

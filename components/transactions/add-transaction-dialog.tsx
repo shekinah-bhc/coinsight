@@ -72,9 +72,9 @@ function AddTransactionForm({
     new Date().toISOString().split("T")[0] ?? ""
   );
 
-  // Filter categories by selected transaction type
+  // Filter active categories by selected transaction type
   const matchingCategories = useMemo(
-    () => categories.filter((c) => c.type === type),
+    () => categories.filter((c) => c.type === type && c.is_active !== false),
     [categories, type]
   );
 

@@ -195,32 +195,6 @@ export function DashboardHeader({
 
             <DropdownMenuSeparator />
 
-            <div className="space-y-1 px-2.5 py-1.5 text-[11px]">
-              <div className="flex items-center justify-between text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5">
-                  <User className="size-3" aria-hidden="true" />
-                  <span>Role</span>
-                </span>
-                <span className="font-medium text-foreground">
-                  {userRole ?? "authenticated"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5">
-                  <ShieldCheck
-                    className="size-3 text-brand-secondary"
-                    aria-hidden="true"
-                  />
-                  <span>Session</span>
-                </span>
-                <span className="font-medium text-brand-secondary">
-                  JWT Verified
-                </span>
-              </div>
-            </div>
-
-            <DropdownMenuSeparator />
-
             <form action={logoutAction} className="p-0.5">
               <button
                 type="submit"

@@ -103,7 +103,10 @@ async function ensureCategories(supabase: Awaited<ReturnType<typeof createClient
   }
 
   if (existing && existing.length > 0) {
-    return existing as Category[];
+    return (existing as Category[]).map((c) => ({
+      ...c,
+      is_active: c.is_active !== false,
+    }));
   }
 
   // Idempotently initialize default categories
@@ -115,7 +118,10 @@ async function ensureCategories(supabase: Awaited<ReturnType<typeof createClient
     .eq("user_id", userId)
     .order("name", { ascending: true });
 
-  return (seeded ?? []) as Category[];
+  return ((seeded ?? []) as Category[]).map((c) => ({
+    ...c,
+    is_active: c.is_active !== false,
+  }));
 }
 
 /**
@@ -372,11 +378,11 @@ export async function createTransactionAction(
     };
   }
 
-  // Validate category ownership and type compatibility (if category provided)
+  // Validate category ownership, active status, and type compatibility (if category provided)
   if (validation.data.categoryId) {
     const { data: category, error: catError } = await supabase
       .from("categories")
-      .select("id, type, user_id")
+      .select("*")
       .eq("id", validation.data.categoryId)
       .eq("user_id", user.id)
       .maybeSingle();
@@ -387,6 +393,16 @@ export async function createTransactionAction(
         message: "Selected category does not exist or does not belong to you.",
         fieldErrors: {
           categoryId: ["Invalid category selected."],
+        },
+      };
+    }
+
+    if (category.is_active === false) {
+      return {
+        status: "error",
+        message: "Archived categories cannot be selected for new transactions.",
+        fieldErrors: {
+          categoryId: ["This category is archived. Please select an active category."],
         },
       };
     }
@@ -428,6 +444,7 @@ export async function createTransactionAction(
   }
 
   revalidatePath("/transactions");
+  revalidatePath("/categories");
   revalidatePath("/dashboard");
   revalidatePath("/accounts");
 
@@ -503,6 +520,21 @@ export async function updateTransactionAction(
 
   const supabase = await createClient();
 
+  // Fetch existing transaction to preserve historical archived category if unchanged
+  const { data: existingTx, error: existingTxError } = await supabase
+    .from("transactions")
+    .select("id, category_id, account_id, type")
+    .eq("id", validation.data.transactionId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existingTxError || !existingTx) {
+    return {
+      status: "error",
+      message: "Transaction not found or access denied.",
+    };
+  }
+
   // Validate account ownership and active status
   const { data: account, error: accError } = await supabase
     .from("accounts")
@@ -535,7 +567,7 @@ export async function updateTransactionAction(
   if (validation.data.categoryId) {
     const { data: category, error: catError } = await supabase
       .from("categories")
-      .select("id, type, user_id")
+      .select("*")
       .eq("id", validation.data.categoryId)
       .eq("user_id", user.id)
       .maybeSingle();
@@ -556,6 +588,20 @@ export async function updateTransactionAction(
         message: `Category type mismatch: Cannot assign an ${category.type} category to an ${validation.data.type} transaction.`,
         fieldErrors: {
           categoryId: [`Must be an ${validation.data.type} category.`],
+        },
+      };
+    }
+
+    // Allow preserving existing archived category, but block assigning a different archived category
+    if (
+      category.is_active === false &&
+      validation.data.categoryId !== existingTx.category_id
+    ) {
+      return {
+        status: "error",
+        message: "Archived categories cannot be newly assigned to transactions.",
+        fieldErrors: {
+          categoryId: ["Please select an active category."],
         },
       };
     }
@@ -585,6 +631,7 @@ export async function updateTransactionAction(
   }
 
   revalidatePath("/transactions");
+  revalidatePath("/categories");
   revalidatePath("/dashboard");
   revalidatePath("/accounts");
 
@@ -618,6 +665,7 @@ export async function deleteTransactionAction(
   }
 
   revalidatePath("/transactions");
+  revalidatePath("/categories");
   revalidatePath("/dashboard");
   revalidatePath("/accounts");
 
